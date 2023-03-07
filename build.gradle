@@ -1,0 +1,25 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.0'
+    id 'java'
+}
+apply plugin: 'maven-publish'
+
+group = 'fr.marembert'
+version = '0.1'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    //dependencies here
+}
+
+shadowJar {
+
+}
