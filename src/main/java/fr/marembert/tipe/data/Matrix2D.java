@@ -4,24 +4,19 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.function.BiFunction;
 
-/**
- * A 2-dimensional array, with predefined size.
- * The {@link #set(int, int, T)} and {@link #get(int, int)} operations are done in constant time.<br>
- * The estimated space complexity magnitude is rows*columns.
- *
- * @param <T> the type of the values stored in the matrix.
- * @author David Marembert
- */
 public class Matrix2D<T> {
 
-    private final T[][] matrix;
+    protected final T[][] matrix;
+
+    private final Class<T> type;
 
     @SuppressWarnings("unchecked")
-    public Matrix2D(int numberOfRows, int numberOfColumns, Class<T> dataClass) {
+    Matrix2D(int numberOfRows, int numberOfColumns, Class<T> dataClass) {
         if (numberOfRows < 1 || numberOfColumns < 1)
             throw new IllegalArgumentException("matrix cannot be smaller than 1x1");
 
         this.matrix = (T[][]) Array.newInstance(dataClass, numberOfRows, numberOfColumns);
+        this.type = dataClass;
     }
 
     /**
@@ -68,7 +63,7 @@ public class Matrix2D<T> {
         if (getNumberOfRows() != other.getNumberOfRows() || getNumberOfColumns() != other.getNumberOfColumns())
             throw new IllegalArgumentException("cannot operate on matrix of different sizes");
 
-        Matrix2D<R> result = new Matrix2D<>(getNumberOfRows(), getNumberOfColumns(), resultClass);
+        Matrix2D<R> result = Matrix.createMatrix(getNumberOfRows(), getNumberOfColumns(), resultClass);
         result.fillMatrix((row, column) -> operation.apply(get(row, column), other.get(row, column)));
         return result;
     }
@@ -76,7 +71,8 @@ public class Matrix2D<T> {
     @Override
     public String toString() {
         String matrix = Arrays.deepToString(this.matrix);
-        return "Matrix2D{\n" + matrix.substring(1, matrix.length() - 1).replaceAll("], ", "]\n") + "\n}";
+        return "Matrix2D(" + type + "){\n" + matrix.substring(1, matrix.length() - 1)
+                .replaceAll("], ", "]\n") + "\n}";
     }
 
     public interface ValueSupplier<T> {
