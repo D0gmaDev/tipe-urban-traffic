@@ -2,6 +2,7 @@ package fr.marembert.tipe.math;
 
 import java.util.Arrays;
 import java.util.function.ToDoubleFunction;
+import java.util.stream.IntStream;
 
 public class MathUtils {
 
@@ -28,5 +29,16 @@ public class MathUtils {
      */
     public static double[] getFunctionImage(double[] points, ToDoubleFunction<Double> function) {
         return Arrays.stream(points).map(function::applyAsDouble).toArray();
+    }
+
+    /**
+     * Creates the array of the absolute differences between two series.
+     * Useful to compare a model's predictions with theoretical values.
+     *
+     * @param amplification a factor to multiply each differences by.
+     * @return a new array containing the positive differences.
+     */
+    public static double[] getAbsoluteDifference(double[] first, double[] second, int amplification) {
+        return IntStream.range(0, first.length).mapToDouble(i -> Math.abs(first[i] - second[i]) * amplification).toArray();
     }
 }

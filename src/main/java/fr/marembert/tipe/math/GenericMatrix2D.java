@@ -14,7 +14,6 @@ public class GenericMatrix2D<T> extends Matrix2D<T> {
         this.matrix = (T[][]) Array.newInstance(typeClass, numberOfRows, numberOfColumns);
     }
 
-
     @Override
     public void set(int row, int column, T data) {
         this.matrix[row][column] = data;

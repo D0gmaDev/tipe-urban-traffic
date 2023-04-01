@@ -1,10 +1,9 @@
 package fr.marembert.tipe;
 
-import fr.marembert.tipe.display.CarsSpeedDisplay;
-import fr.marembert.tipe.experiment.CarsSpeedResult;
-import fr.marembert.tipe.math.Matrix;
-import fr.marembert.tipe.math.RealMatrix2D;
-import java.util.stream.IntStream;
+import fr.marembert.tipe.display.CarsPositionDisplay;
+import fr.marembert.tipe.experiment.CarsPositionResult;
+import fr.marembert.tipe.experiment.ConstantAccelerationExperiment;
+import java.time.Duration;
 
 /**
  * A CPGE TIPE project
@@ -16,13 +15,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        RealMatrix2D testMatrix = Matrix.createRealMatrix(3, 15);
-        testMatrix.fillMatrix((row, column) -> row * (5. + column));
-        System.out.println(testMatrix);
+        ConstantAccelerationExperiment constantAccelerationExperiment = new ConstantAccelerationExperiment(3, 5.);
+        CarsPositionResult result = constantAccelerationExperiment.runExperiment(Duration.ZERO);
 
-        CarsSpeedResult vehiculesResult = new CarsSpeedResult("Vitesse des véhicules", IntStream.range(0, 15).mapToDouble(i -> (double) i).toArray(), testMatrix);
-
-        new CarsSpeedDisplay().displayResult(vehiculesResult);
+        new CarsPositionDisplay().displayResult(result);
     }
 
 }
