@@ -1,46 +1,42 @@
-package fr.marembert.tipe.data;
+package fr.marembert.tipe.math;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
-public class Matrix2D<T> {
+public abstract class Matrix2D<T> {
 
-    protected final T[][] matrix;
+    protected final Class<T> typeClass;
 
-    private final Class<T> type;
+    private final int numberOfRows;
+    private final int numberOfColumns;
 
-    @SuppressWarnings("unchecked")
-    Matrix2D(int numberOfRows, int numberOfColumns, Class<T> dataClass) {
+    Matrix2D(int numberOfRows, int numberOfColumns, Class<T> typeClass) {
         if (numberOfRows < 1 || numberOfColumns < 1)
             throw new IllegalArgumentException("matrix cannot be smaller than 1x1");
 
-        this.matrix = (T[][]) Array.newInstance(dataClass, numberOfRows, numberOfColumns);
-        this.type = dataClass;
+        this.numberOfRows = numberOfRows;
+        this.numberOfColumns = numberOfColumns;
+        this.typeClass = typeClass;
     }
 
     /**
      * Mutates the current object by replacing the previous value stored at (row,column).<br>
      * Throws an {@link ArrayIndexOutOfBoundsException} if row or column is out of bounds
      */
-    public void set(int row, int column, T data) {
-        this.matrix[row][column] = data;
-    }
+    public abstract void set(int row, int column, T data);
 
     /**
      * Gets the current value stored at (row,column) (can be null).<br>
      * Throws an {@link ArrayIndexOutOfBoundsException} if row or column is out of bounds
      */
-    public T get(int row, int column) {
-        return this.matrix[row][column];
-    }
+    public abstract T get(int row, int column);
 
     public int getNumberOfRows() {
-        return this.matrix.length;
+        return this.numberOfRows;
     }
 
     public int getNumberOfColumns() {
-        return this.matrix[0].length;
+        return this.numberOfColumns;
     }
 
     public void fillMatrix(T value) {
@@ -68,11 +64,33 @@ public class Matrix2D<T> {
         return result;
     }
 
+    public Matrix2D<T> transpose() {
+        Matrix2D<T> result = Matrix.createMatrix(getNumberOfColumns(), getNumberOfRows(), this.typeClass);
+        result.fillMatrix((row, column) -> get(column, row));
+        return result;
+    }
+
     @Override
-    public String toString() {
-        String matrix = Arrays.deepToString(this.matrix);
-        return "Matrix2D(" + type + "){\n" + matrix.substring(1, matrix.length() - 1)
-                .replaceAll("], ", "]\n") + "\n}";
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+
+        if (!(obj instanceof Matrix2D<?> other))
+            return false;
+
+        if (getNumberOfRows() != other.getNumberOfRows() || getNumberOfColumns() != other.getNumberOfColumns())
+            return false;
+
+        for (int row = 0; row < getNumberOfRows(); row++) {
+            for (int column = 0; column < getNumberOfColumns(); column++) {
+                T value = get(row, column);
+                Object otherValue = other.get(row, column);
+                if (value == null && otherValue != null || !Objects.equals(value, otherValue)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public interface ValueSupplier<T> {

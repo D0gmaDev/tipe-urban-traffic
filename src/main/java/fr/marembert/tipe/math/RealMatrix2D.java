@@ -1,4 +1,4 @@
-package fr.marembert.tipe.data;
+package fr.marembert.tipe.math;
 
 import java.util.Arrays;
 
@@ -9,8 +9,12 @@ import java.util.Arrays;
  */
 public class RealMatrix2D extends Matrix2D<Double> {
 
+    private final double[][] matrix;
+
     RealMatrix2D(int numberOfRows, int numberOfColumns) {
         super(numberOfRows, numberOfColumns, Double.class);
+
+        this.matrix = new double[numberOfRows][numberOfColumns];
     }
 
     /**
@@ -18,11 +22,11 @@ public class RealMatrix2D extends Matrix2D<Double> {
      *
      * @param row the row index
      * @param column the column index
-     * @return the value, or 0 if null
+     * @return the value, but cast to a double
+     * @see Double
      */
     public double getValue(int row, int column) {
-        Double value = get(row, column);
-        return value != null ? (double) value : 0;
+        return get(row, column);
     }
 
     public RealMatrix2D plus(RealMatrix2D other) {
@@ -38,7 +42,7 @@ public class RealMatrix2D extends Matrix2D<Double> {
     }
 
     public double[] getDoubleColumn(int column) {
-        double[] values = new double[getNumberOfColumns()];
+        double[] values = new double[getNumberOfRows()];
         for (int row = 0; row < getNumberOfColumns(); row++) {
             values[row] = getValue(row, column);
         }
@@ -46,10 +50,19 @@ public class RealMatrix2D extends Matrix2D<Double> {
     }
 
     @Override
+    public void set(int row, int column, Double data) {
+        this.matrix[row][column] = data;
+    }
+
+    @Override
+    public Double get(int row, int column) {
+        return this.matrix[row][column];
+    }
+
+    @Override
     public String toString() {
         String matrix = Arrays.deepToString(this.matrix);
-        return "RealMatrix2D{\n" + matrix.substring(1, matrix.length() - 1)
-                .replaceAll("], ", "]\n") + "\n}";
+        return "RealMatrix2D{\n" + matrix.substring(1, matrix.length() - 1).replaceAll("], ", "]\n") + "\n}";
     }
 
 }

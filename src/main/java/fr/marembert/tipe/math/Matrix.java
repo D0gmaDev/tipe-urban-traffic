@@ -1,4 +1,4 @@
-package fr.marembert.tipe.data;
+package fr.marembert.tipe.math;
 
 /**
  * Factory class to create matrices
@@ -10,7 +10,7 @@ public class Matrix {
         if (dataClass.equals(Double.class))
             return (Matrix2D<T>) createRealMatrix(numberOfRows, numberOfColumns);
 
-        return new Matrix2D<>(numberOfRows, numberOfColumns, dataClass);
+        return new GenericMatrix2D<>(numberOfRows, numberOfColumns, dataClass);
     }
 
     public static RealMatrix2D createRealMatrix(int numberOfRows, int numberOfColumns) {

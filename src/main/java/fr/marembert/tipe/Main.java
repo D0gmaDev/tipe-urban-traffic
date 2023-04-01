@@ -1,9 +1,9 @@
 package fr.marembert.tipe;
 
-import fr.marembert.tipe.data.Matrix;
-import fr.marembert.tipe.data.RealMatrix2D;
 import fr.marembert.tipe.display.CarsSpeedDisplay;
 import fr.marembert.tipe.experiment.CarsSpeedResult;
+import fr.marembert.tipe.math.Matrix;
+import fr.marembert.tipe.math.RealMatrix2D;
 import java.util.stream.IntStream;
 
 /**
