@@ -5,12 +5,12 @@ import fr.marembert.tipe.math.Matrix;
 import fr.marembert.tipe.math.RealMatrix2D;
 import fr.marembert.tipe.traffic.Car;
 import fr.marembert.tipe.traffic.DynamicTick;
-import java.time.Duration;
 import java.util.Arrays;
 
 public class ConstantAccelerationExperiment implements TrafficExperiment<CarsPositionResult> {
 
-    private static final double STEP = DynamicTick.DEFAULT_TIME_STEP;
+    private static final double STEP        = DynamicTick.TIME_STEP;
+    private static final int    SAMPLE_SIZE = 50;
 
     private final double duration;
     private final double acceleration;
@@ -21,41 +21,36 @@ public class ConstantAccelerationExperiment implements TrafficExperiment<CarsPos
     }
 
     @Override
-    public CarsPositionResult runExperiment(Duration timout) {
+    public CarsPositionResult runExperiment() {
 
         Car car = new Car(0);
         car.setAcceleration(acceleration);
 
         int iterationsNumber = (int) (duration / STEP);
 
-        int sampleSize = 100;
-
-        int record = (iterationsNumber - 1) / (sampleSize - 1);
-
-        RealMatrix2D speeds = Matrix.createRealMatrix(2, sampleSize);
-        double[] sample = new double[sampleSize];
+        double[] timeSample = MathUtils.linSpace(0, duration, SAMPLE_SIZE);
+        RealMatrix2D positionsSample = Matrix.createRealMatrix(2, SAMPLE_SIZE);
 
         int j = 0;
+        double nextSample = timeSample[0];
 
         for (int i = 0; i < iterationsNumber; i++) {
             car.tick(STEP);
 
-            if (i % record == 0) {
-                double time = i * STEP;
+            double time = i * STEP;
 
-                sample[j] = time;
-                speeds.set(0, j, car.getPosition());
-                j++;
+            if (time >= nextSample) {
+                positionsSample.set(0, j, car.getPosition());
+                nextSample = timeSample[++j];
             }
         }
 
-        sample[sampleSize - 1] = duration;
-        speeds.set(0, sampleSize - 1, car.getPosition());
+        positionsSample.set(0, SAMPLE_SIZE - 1, car.getPosition()); // adjust final position
 
-        double[] theory = MathUtils.getFunctionImage(sample, x -> 0.5 * acceleration * x * x);
+        double[] theoreticalSeries = MathUtils.getFunctionImage(timeSample, x -> 0.5 * acceleration * x * x);
 
-        speeds.fillRow(1, Arrays.stream(theory).boxed().toList());
+        positionsSample.fillRow(1, Arrays.stream(theoreticalSeries).boxed().toList());
 
-        return new CarsPositionResult("Position du véhicule", sample, speeds, new String[]{"Voiture", "Position Théorique"});
+        return new CarsPositionResult("Position du véhicule", timeSample, positionsSample, new String[]{"Voiture", "Position Théorique"});
     }
 }

@@ -41,4 +41,33 @@ public class MathUtils {
     public static double[] getAbsoluteDifference(double[] first, double[] second, int amplification) {
         return IntStream.range(0, first.length).mapToDouble(i -> Math.abs(first[i] - second[i]) * amplification).toArray();
     }
+
+    /**
+     * Just as the numpy function of the same name, returns evenly spaced numbers over a specified interval.
+     * Returns num evenly spaced samples, calculated over the interval [start, stop].<br>
+     *
+     * The choice has been made to compute the exact value {@code start + (i * step)} each time, instead of an iterative
+     * approach like so:
+     * {@code DoubleStream.iterate(start, n -> n + step).limit(num).toArray()}
+     * to avoid rounding errors and thus ensure that the last value is precisely stop.
+     *
+     * @return the generated array, starting with start and ending with stop (assuming num is >=2)
+     * @see <a href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html">Numpy's linspace</a>
+     */
+    public static double[] linSpace(double start, double stop, int num) {
+        double step = (stop - start) / (num - 1);
+        return IntStream.range(0, num).mapToDouble(i -> start + (i * step)).toArray();
+    }
+
+    /**
+     * Similar to {@link #linSpace(double, double, int)} but each value is rounded to the
+     * nearest integer.
+     *
+     * @see #linSpace(double, double, int)
+     * @see Math#round(double) the rounding method used
+     */
+    public static int[] intLinSpace(double start, double stop, int num) {
+        double step = (stop - start) / (num - 1);
+        return IntStream.range(0, num).map(i -> (int) Math.round(start + i * step)).toArray();
+    }
 }

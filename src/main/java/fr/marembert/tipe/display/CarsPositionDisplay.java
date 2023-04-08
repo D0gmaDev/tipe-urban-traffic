@@ -20,6 +20,7 @@ public class CarsPositionDisplay implements ResultDisplayHandler<CarsPositionRes
 
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
         chart.getStyler().setMarkerSize(3);
+        chart.getStyler().setXAxisDecimalPattern("#.#");
 
         RealMatrix2D speeds = result.positions();
 

@@ -3,7 +3,6 @@ package fr.marembert.tipe;
 import fr.marembert.tipe.display.CarsPositionDisplay;
 import fr.marembert.tipe.experiment.CarsPositionResult;
 import fr.marembert.tipe.experiment.ConstantAccelerationExperiment;
-import java.time.Duration;
 
 /**
  * A CPGE TIPE project
@@ -16,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
 
         ConstantAccelerationExperiment constantAccelerationExperiment = new ConstantAccelerationExperiment(3, 5.);
-        CarsPositionResult result = constantAccelerationExperiment.runExperiment(Duration.ZERO);
+        CarsPositionResult result = constantAccelerationExperiment.runExperiment();
 
         new CarsPositionDisplay().displayResult(result);
     }
