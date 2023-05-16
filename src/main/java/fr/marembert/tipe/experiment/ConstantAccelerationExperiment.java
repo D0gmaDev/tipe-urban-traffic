@@ -23,7 +23,7 @@ public class ConstantAccelerationExperiment implements TrafficExperiment<CarsPos
     @Override
     public CarsPositionResult runExperiment() {
 
-        Car car = new Car(0);
+        Car car = new Car(0, 1000., 4, 0);
         car.setAcceleration(acceleration);
 
         int iterationsNumber = (int) (duration / STEP);
@@ -33,6 +33,8 @@ public class ConstantAccelerationExperiment implements TrafficExperiment<CarsPos
 
         int j = 0;
         double nextSample = timeSample[0];
+
+        long start = System.currentTimeMillis();
 
         for (int i = 0; i < iterationsNumber; i++) {
             car.tick(STEP);
@@ -44,6 +46,10 @@ public class ConstantAccelerationExperiment implements TrafficExperiment<CarsPos
                 nextSample = timeSample[++j];
             }
         }
+
+        long stop = System.currentTimeMillis();
+        double time = (stop - start) / 1000.;
+        System.out.printf("Time elapsed: %.3fs. Speed: %.1fM iterations per seconds%n", time, iterationsNumber / time / 1e6);
 
         positionsSample.set(0, SAMPLE_SIZE - 1, car.getPosition()); // adjust final position
 

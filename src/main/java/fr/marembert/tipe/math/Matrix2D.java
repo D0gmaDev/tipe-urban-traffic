@@ -62,6 +62,13 @@ public abstract class Matrix2D<T> {
         }
     }
 
+    public void fillColumn(int column, Iterable<T> values) {
+        int row = 0;
+        for (T value : values) {
+            set(row++, column, value);
+        }
+    }
+
     public <U, R> Matrix2D<R> operateWith(Class<R> resultClass, Matrix2D<U> other, BiFunction<T, U, R> operation) {
         if (getNumberOfRows() != other.getNumberOfRows() || getNumberOfColumns() != other.getNumberOfColumns())
             throw new IllegalArgumentException("cannot operate on matrix of different sizes");

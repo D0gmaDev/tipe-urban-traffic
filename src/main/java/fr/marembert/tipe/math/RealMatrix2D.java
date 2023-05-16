@@ -35,6 +35,10 @@ public class RealMatrix2D extends Matrix2D<Double> implements Iterable<double[]>
         return (RealMatrix2D) operateWith(Double.class, other, Double::sum);
     }
 
+    public RealMatrix2D minus(RealMatrix2D other) {
+        return (RealMatrix2D) operateWith(Double.class, other, (a, b) -> a - b);
+    }
+
     public double[] getDoubleRow(int row) {
         double[] values = new double[getNumberOfColumns()];
         for (int column = 0; column < getNumberOfColumns(); column++) {
