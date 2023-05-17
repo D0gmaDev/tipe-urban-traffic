@@ -18,10 +18,12 @@ import java.util.function.DoubleFunction;
 public class Main {
 
     public static void main(String[] args) {
+        System.out.print("Please type an experiment id: ");
 
         switch (new Scanner(System.in).nextLine().toLowerCase()) {
             case "acc" -> constantAccelerationExperiment();
             case "flux" -> carFluxExperiment();
+            case "fullstop" -> fullStopExperiment();
             default -> throw new IllegalStateException("Unknown experiment");
         }
 
@@ -40,6 +42,17 @@ public class Main {
         DoubleFunction<Double> leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
 
         CarFluxExperiment carFluxExperiment = new CarFluxExperiment(40, 8, 4, 20, defaultSpeed, 1, leadingCarSpeed);
+        CarFluxResult carFluxResult = carFluxExperiment.runExperiment();
+
+        new CarsDisplay().displayResult(carFluxResult);
+    }
+
+    private static void fullStopExperiment() {
+        double defaultSpeed = 10.;
+
+        DoubleFunction<Double> leadingCarSpeed = time -> time <= 0 ? defaultSpeed : defaultSpeed * Math.exp((-0.5 * time));
+
+        CarFluxExperiment carFluxExperiment = new CarFluxExperiment(600, 3, 4, 20, defaultSpeed, 1, leadingCarSpeed);
         CarFluxResult carFluxResult = carFluxExperiment.runExperiment();
 
         new CarsDisplay().displayResult(carFluxResult);
