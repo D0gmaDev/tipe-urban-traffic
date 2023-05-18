@@ -22,6 +22,7 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
     private final double initialDistance;
     private final double defaultSpeed;
     private final double reactionTime;
+    private final double accelerationFactor;
 
     private final DoubleFunction<Double> firstCarSpeed;
 
@@ -30,13 +31,14 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
     private RealMatrix2D carsPositions;
     private RealMatrix2D carsSpeed;
 
-    public CarFluxExperiment(double duration, int numberOfCars, double carLength, double initialDistance, double defaultSpeed, double reactionTime, DoubleFunction<Double> firstCarSpeed) {
+    public CarFluxExperiment(double duration, int numberOfCars, double carLength, double initialDistance, double defaultSpeed, double reactionTime, double accelerationFactor, DoubleFunction<Double> firstCarSpeed) {
         this.duration = duration;
         this.numberOfCars = numberOfCars;
         this.carLength = carLength;
         this.initialDistance = initialDistance;
         this.defaultSpeed = defaultSpeed;
         this.reactionTime = reactionTime;
+        this.accelerationFactor = accelerationFactor;
         this.firstCarSpeed = firstCarSpeed;
         this.carsLane = IntStream.range(0, numberOfCars).mapToObj(id -> new Car(id, 1_000., carLength, -id * (initialDistance + carLength), defaultSpeed)).toList();
     }
@@ -89,9 +91,12 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
         theoreticalPositions.fillMatrix((row, column) -> -row * (carLength + initialDistance) + (column * STEP * defaultSpeed));
 
         RealMatrix2D carShift = Matrix.createRealMatrix(this.carsPositions.getNumberOfRows(), this.carsPositions.getNumberOfColumns());
-        carShift.fillMatrix((row, column) -> row * -(carLength + initialDistance));
+        carShift.fillMatrix((row, column) -> row * -20.);
 
-        return new CarFluxResult(timeSample, this.carsPositions, this.carsPositions.minus(theoreticalPositions).plus(carShift), this.carsSpeed);
+        RealMatrix2D followDistance = Matrix.createRealMatrix(this.carsPositions.getNumberOfRows() - 1, this.carsPositions.getNumberOfColumns());
+        followDistance.fillMatrix((row, column) -> carsPositions.get(row, column) - carsPositions.get(row + 1, column));
+
+        return new CarFluxResult(timeSample, this.carsPositions, this.carsPositions.minus(theoreticalPositions).plus(carShift), this.carsSpeed, followDistance);
     }
 
     private boolean hasCrashed(int iteration) {
@@ -108,7 +113,7 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
         double speedDelta = speed(car.getId() - 1, pastIteration) - speed(car.getId(), pastIteration);
         double positionDelta = position(car.getId() - 1, pastIteration) - position(car.getId(), pastIteration) - carLength;
 
-        return 9 * speedDelta / positionDelta;
+        return this.accelerationFactor * speedDelta / positionDelta;
     }
 
     private double position(int id, int iteration) {
