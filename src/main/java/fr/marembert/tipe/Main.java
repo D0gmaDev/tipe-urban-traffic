@@ -2,11 +2,14 @@ package fr.marembert.tipe;
 
 import fr.marembert.tipe.display.CarsDisplay;
 import fr.marembert.tipe.display.CarsPositionDisplay;
+import fr.marembert.tipe.display.MultipleCarsDisplay;
+import fr.marembert.tipe.display.ResultDisplayHandler;
 import fr.marembert.tipe.experiment.CarFluxExperiment;
 import fr.marembert.tipe.experiment.CarFluxResult;
-import fr.marembert.tipe.experiment.CarsPositionResult;
 import fr.marembert.tipe.experiment.ConstantAccelerationExperiment;
-import java.util.ArrayList;
+import fr.marembert.tipe.experiment.MultipleExperiment;
+import fr.marembert.tipe.experiment.TrafficExperiment;
+import fr.marembert.tipe.experiment.TrafficResult;
 import java.util.Scanner;
 import java.util.function.DoubleFunction;
 
@@ -25,17 +28,36 @@ public class Main {
             case "acc" -> constantAccelerationExperiment();
             case "flux" -> carFluxExperiment();
             case "flux2" -> carFluxExperiment2();
+            case "flux3" -> carFluxExperiment3();
             case "fullstop" -> fullStopExperiment();
             default -> throw new IllegalStateException("Unknown experiment");
         }
 
     }
 
-    private static void constantAccelerationExperiment() {
-        ConstantAccelerationExperiment constantAccelerationExperiment = new ConstantAccelerationExperiment(50, 5.);
-        CarsPositionResult result = constantAccelerationExperiment.runExperiment();
+    private static <T extends TrafficResult> void runExperiment(TrafficExperiment<T> experiment, ResultDisplayHandler<T> resultDisplayHandler) {
 
-        new CarsPositionDisplay().displayResult(result);
+        System.out.println("==== Starting simulation...");
+
+        long start = System.currentTimeMillis();
+        T result = experiment.runExperiment();
+        long stop = System.currentTimeMillis();
+
+        System.out.printf("==== Simulation done in %.2fs %n", (stop - start) / 1000.);
+
+        start = System.currentTimeMillis();
+        resultDisplayHandler.displayResult(result);
+        stop = System.currentTimeMillis();
+
+        System.out.printf("==== Displayed in %.2fs %n", (stop - start) / 1000.);
+    }
+
+    private static void constantAccelerationExperiment() {
+
+        runExperiment(
+                new ConstantAccelerationExperiment(50, 5.),
+                new CarsPositionDisplay()
+        );
     }
 
     private static void carFluxExperiment() {
@@ -43,40 +65,58 @@ public class Main {
 
         DoubleFunction<Double> leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
 
-        CarFluxExperiment carFluxExperiment = new CarFluxExperiment(40, 3, 4, 40, defaultSpeed, 1, 20, leadingCarSpeed);
-        CarFluxResult carFluxResult = carFluxExperiment.runExperiment();
-
-        new CarsDisplay().displayResult(carFluxResult);
+        runExperiment(
+                new CarFluxExperiment(40, 3, 4, 40, defaultSpeed, 1, 20, leadingCarSpeed),
+                new CarsDisplay()
+        );
     }
 
     /**
      * Test different acceleration factors
      */
     private static void carFluxExperiment2() {
-        double defaultSpeed = 10.;
+        double defaultSpeed = 13.;
 
         DoubleFunction<Double> leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
 
-        ArrayList<CarFluxResult> carFluxResults = new ArrayList<>();
+        MultipleExperiment<CarFluxResult> experiments = new MultipleExperiment<>();
 
         for (int i = 6; i < 12; i++) {
-            CarFluxExperiment carFluxExperiment = new CarFluxExperiment(40, 6, 4, 60, defaultSpeed, 1, i * 5, leadingCarSpeed);
-            CarFluxResult carFluxResult = carFluxExperiment.runExperiment();
-            carFluxResults.add(carFluxResult);
+            experiments.addExperiment(new CarFluxExperiment(40, 6, 4, 60, defaultSpeed, 1, i * 5, leadingCarSpeed));
         }
 
-        new CarsDisplay().displayMany(carFluxResults);
+        runExperiment(
+                experiments,
+                new MultipleCarsDisplay()
+        );
     }
+
+    private static void carFluxExperiment3() {
+
+        MultipleExperiment<CarFluxResult> experiments = new MultipleExperiment<>();
+
+        for (int speed = 8; speed <= 13; speed++) {
+            double defaultSpeed = speed;
+            DoubleFunction<Double> leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
+            experiments.addExperiment(new CarFluxExperiment(40, 6, 4, 50, defaultSpeed, 1, 30, leadingCarSpeed));
+        }
+
+        runExperiment(
+                experiments,
+                new MultipleCarsDisplay()
+        );
+    }
+
 
     private static void fullStopExperiment() {
         double defaultSpeed = 10.;
 
         DoubleFunction<Double> leadingCarSpeed = time -> time <= 0 ? defaultSpeed : defaultSpeed * Math.exp((-0.5 * time));
 
-        CarFluxExperiment carFluxExperiment = new CarFluxExperiment(60, 3, 4, 200, defaultSpeed, 1, 10, leadingCarSpeed);
-        CarFluxResult carFluxResult = carFluxExperiment.runExperiment();
-
-        new CarsDisplay().displayResult(carFluxResult);
+        runExperiment(
+                new CarFluxExperiment(60, 3, 4, 200, defaultSpeed, 1, 10, leadingCarSpeed),
+                new CarsDisplay()
+        );
     }
 
 }

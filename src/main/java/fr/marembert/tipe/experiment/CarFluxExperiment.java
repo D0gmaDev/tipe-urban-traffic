@@ -40,7 +40,7 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
         this.reactionTime = reactionTime;
         this.accelerationFactor = accelerationFactor;
         this.firstCarSpeed = firstCarSpeed;
-        this.carsLane = IntStream.range(0, numberOfCars).mapToObj(id -> new Car(id, 1_000., carLength, -id * (initialDistance + carLength), defaultSpeed)).toList();
+        this.carsLane = IntStream.range(0, numberOfCars).mapToObj(id -> new Car(id, carLength, -id * (initialDistance + carLength), defaultSpeed)).toList();
     }
 
     @Override
@@ -85,8 +85,6 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
                 throw new IllegalStateException();
         }
 
-        System.out.println("Simulation Finished. Drawing graphs...");
-
         RealMatrix2D theoreticalPositions = Matrix.createRealMatrix(this.carsPositions.getNumberOfRows(), this.carsPositions.getNumberOfColumns());
         theoreticalPositions.fillMatrix((row, column) -> -row * (carLength + initialDistance) + (column * STEP * defaultSpeed));
 
@@ -128,15 +126,4 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
         return this.carsLane.get(id).getPosition();
     }
 
-    private double speed(int id) {
-        return this.carsLane.get(id).getSpeed();
-    }
-
-    private double accel(int id) {
-        return this.carsLane.get(id).getAcceleration();
-    }
-
-    private double density() {
-        return 1 / (pos(0) - pos(1));
-    }
 }

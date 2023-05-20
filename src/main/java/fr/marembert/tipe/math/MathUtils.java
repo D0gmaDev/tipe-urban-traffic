@@ -70,4 +70,16 @@ public class MathUtils {
         double step = (stop - start) / (num - 1);
         return IntStream.range(0, num).map(i -> (int) Math.round(start + i * step)).toArray();
     }
+
+    /**
+     * Bounds a value between a minimum and maximum value.
+     *
+     * @param minimum the minimum value
+     * @param value the value to be bounded
+     * @param maximum the maximum value
+     * @return the bounded value
+     */
+    public static double bound(double minimum, double value, double maximum) {
+        return Math.max(minimum, Math.min(maximum, value));
+    }
 }
