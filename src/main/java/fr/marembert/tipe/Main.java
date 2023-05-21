@@ -2,16 +2,13 @@ package fr.marembert.tipe;
 
 import fr.marembert.tipe.display.CarsDisplay;
 import fr.marembert.tipe.display.CarsPositionDisplay;
+import fr.marembert.tipe.display.DensityDisplay.MultipleDensityDisplay;
 import fr.marembert.tipe.display.MultipleCarsDisplay;
 import fr.marembert.tipe.display.ResultDisplayHandler;
-import fr.marembert.tipe.experiment.CarFluxExperiment;
-import fr.marembert.tipe.experiment.CarFluxResult;
-import fr.marembert.tipe.experiment.ConstantAccelerationExperiment;
-import fr.marembert.tipe.experiment.MultipleExperiment;
-import fr.marembert.tipe.experiment.TrafficExperiment;
-import fr.marembert.tipe.experiment.TrafficResult;
+import fr.marembert.tipe.experiment.*;
+import java.util.List;
 import java.util.Scanner;
-import java.util.function.DoubleFunction;
+import java.util.function.DoubleUnaryOperator;
 
 /**
  * A CPGE TIPE project
@@ -30,6 +27,7 @@ public class Main {
             case "flux2" -> carFluxExperiment2();
             case "flux3" -> carFluxExperiment3();
             case "fullstop" -> fullStopExperiment();
+            case "density" -> densityExperiment();
             default -> throw new IllegalStateException("Unknown experiment");
         }
 
@@ -63,7 +61,7 @@ public class Main {
     private static void carFluxExperiment() {
         double defaultSpeed = 10.;
 
-        DoubleFunction<Double> leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
+        DoubleUnaryOperator leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
 
         runExperiment(
                 new CarFluxExperiment(40, 3, 4, 40, defaultSpeed, 1, 20, leadingCarSpeed),
@@ -77,7 +75,7 @@ public class Main {
     private static void carFluxExperiment2() {
         double defaultSpeed = 13.;
 
-        DoubleFunction<Double> leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
+        DoubleUnaryOperator leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
 
         MultipleExperiment<CarFluxResult> experiments = new MultipleExperiment<>();
 
@@ -97,7 +95,7 @@ public class Main {
 
         for (int speed = 8; speed <= 13; speed++) {
             double defaultSpeed = speed;
-            DoubleFunction<Double> leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
+            DoubleUnaryOperator leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
             experiments.addExperiment(new CarFluxExperiment(40, 6, 4, 50, defaultSpeed, 1, 30, leadingCarSpeed));
         }
 
@@ -111,11 +109,18 @@ public class Main {
     private static void fullStopExperiment() {
         double defaultSpeed = 10.;
 
-        DoubleFunction<Double> leadingCarSpeed = time -> time <= 0 ? defaultSpeed : defaultSpeed * Math.exp((-0.5 * time));
+        DoubleUnaryOperator leadingCarSpeed = time -> time <= 0 ? defaultSpeed : defaultSpeed * Math.exp((-0.5 * time));
 
         runExperiment(
                 new CarFluxExperiment(60, 3, 4, 200, defaultSpeed, 1, 10, leadingCarSpeed),
                 new CarsDisplay()
+        );
+    }
+
+    private static void densityExperiment() {
+        runExperiment(
+                new MultipleExperiment<>(List.of(new DensityExperiment(4., 13., 2 / 50.), new DensityExperiment(4., 8., 2 / 25.))),
+                new MultipleDensityDisplay()
         );
     }
 

@@ -6,7 +6,7 @@ import fr.marembert.tipe.math.RealMatrix2D;
 import fr.marembert.tipe.traffic.Car;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.DoubleFunction;
+import java.util.function.DoubleUnaryOperator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -24,14 +24,14 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
     private final double reactionTime;
     private final double accelerationFactor;
 
-    private final DoubleFunction<Double> firstCarSpeed;
+    private final DoubleUnaryOperator firstCarSpeed;
 
     private final List<Car> carsLane;
 
     private RealMatrix2D carsPositions;
     private RealMatrix2D carsSpeed;
 
-    public CarFluxExperiment(double duration, int numberOfCars, double carLength, double initialDistance, double defaultSpeed, double reactionTime, double accelerationFactor, DoubleFunction<Double> firstCarSpeed) {
+    public CarFluxExperiment(double duration, int numberOfCars, double carLength, double initialDistance, double defaultSpeed, double reactionTime, double accelerationFactor, DoubleUnaryOperator firstCarSpeed) {
         this.duration = duration;
         this.numberOfCars = numberOfCars;
         this.carLength = carLength;
@@ -71,7 +71,7 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
 
                 if (car.getId() == 0) {
 
-                    car.setSpeed(this.firstCarSpeed.apply(STEP * iteration));
+                    car.setSpeed(this.firstCarSpeed.applyAsDouble(STEP * iteration));
 
                 } else if (pastIteration > 0)
                     car.setAcceleration(newAcceleration(car, pastIteration));
