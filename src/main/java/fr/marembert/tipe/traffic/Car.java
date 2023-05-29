@@ -4,27 +4,24 @@ public class Car implements DynamicTick {
 
     private final int id;
 
-    private final double mass = 1_000;
-    private final double length;
+    private final double mass = 1_000; // kg
+    private final double length; // m
 
-    private final double minAcceleration = 0;
-    private final double maxAcceleration = 0;
+    private double position; // m
+    private double speed; // m * s^(-1)
+    private double acceleration; // m * s^(-2)
 
-    private double position;
-    private double speed;
-    private double acceleration;
-
-    public Car(int id, double length, double position) {
+    public Car(int id, double length) {
         this.id = id;
         this.length = length;
-        this.position = position;
     }
 
-    public Car(int id, double length, double position, double speed) {
+    public Car(int id, double length, double position, double speed, double acceleration) {
         this.id = id;
         this.length = length;
         this.position = position;
         this.speed = speed;
+        this.acceleration = acceleration;
     }
 
     @Override

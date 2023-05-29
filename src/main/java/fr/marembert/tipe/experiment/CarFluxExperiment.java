@@ -40,7 +40,7 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
         this.reactionTime = reactionTime;
         this.accelerationFactor = accelerationFactor;
         this.firstCarSpeed = firstCarSpeed;
-        this.carsLane = IntStream.range(0, numberOfCars).mapToObj(id -> new Car(id, carLength, -id * (initialDistance + carLength), defaultSpeed)).toList();
+        this.carsLane = IntStream.range(0, numberOfCars).mapToObj(id -> new Car(id, carLength, -id * (initialDistance + carLength), defaultSpeed, 0)).toList();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
             }
 
             if (hasCrashed(iteration))
-                throw new IllegalStateException();
+                throw new IllegalStateException("Simulation failed: crash alert");
         }
 
         RealMatrix2D theoreticalPositions = Matrix.createRealMatrix(this.carsPositions.getNumberOfRows(), this.carsPositions.getNumberOfColumns());
@@ -99,8 +99,8 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
 
     private boolean hasCrashed(int iteration) {
         for (int i = 1; i < numberOfCars; i++) {
-            if (pos(i) >= pos(i - 1) - carLength) {
-                System.out.printf("A crash has occurred at iteration %d: Car %s (%.2f) bumped into Car %s (%.2f)%n", iteration, i, pos(i), i - 1, pos(i - 1));
+            if (position(i) >= position(i - 1) - carLength) {
+                System.out.printf("A crash has occurred at iteration %d: Car %s (%.2f) bumped into Car %s (%.2f)%n", iteration, i, position(i), i - 1, position(i - 1));
                 return true;
             }
         }
@@ -114,16 +114,16 @@ public class CarFluxExperiment implements TrafficExperiment<CarFluxResult> {
         return this.accelerationFactor * speedDelta / positionDelta;
     }
 
+    private double position(int id) {
+        return this.carsLane.get(id).getPosition();
+    }
+
     private double position(int id, int iteration) {
         return this.carsPositions.get(id, iteration);
     }
 
     private double speed(int id, int iteration) {
         return this.carsSpeed.get(id, iteration);
-    }
-
-    private double pos(int id) {
-        return this.carsLane.get(id).getPosition();
     }
 
 }

@@ -9,6 +9,7 @@ import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.Styler.ChartTheme;
+import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.lines.SeriesLines;
 
 public class DensityDisplay implements ResultDisplayHandler<DensityResult> {
@@ -27,18 +28,19 @@ public class DensityDisplay implements ResultDisplayHandler<DensityResult> {
     }
 
     private static XYChart drawChart(DensityResult result) {
-        XYChart xyChart = new XYChartBuilder().theme(ChartTheme.Matlab).title(String.format("Maximum Flux: %.3f cars/s", result.maximumFlux())).xAxisTitle("densité").yAxisTitle("vitesse").build();
+        XYChart xyChart = new XYChartBuilder().theme(ChartTheme.Matlab).title(String.format("Maximum Speed: %.1f m/s | Maximum Flux: %.3f cars/s", result.maximumSpeed(), result.maximumFlux())).xAxisTitle("Densité (cars/m)").build();
 
         xyChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
         xyChart.getStyler().setMarkerSize(1);
         xyChart.getStyler().setXAxisDecimalPattern("#.#");
         xyChart.getStyler().setYAxisMax(15.);
+        xyChart.getStyler().setLegendPosition(LegendPosition.InsideNE);
 
-        XYSeries speedSeries = xyChart.addSeries("Vitesse", result.density(), result.speed());
+        XYSeries speedSeries = xyChart.addSeries("Speed (m/s)", result.density(), result.speed());
         speedSeries.setLineStyle(SeriesLines.SOLID);
         speedSeries.setLineColor(Color.ORANGE);
 
-        XYSeries fluxSeries = xyChart.addSeries("Flux", result.density(), result.flux());
+        XYSeries fluxSeries = xyChart.addSeries("Flux (cars/s)", result.density(), result.flux());
         fluxSeries.setLineStyle(SeriesLines.SOLID);
         fluxSeries.setLineColor(Color.GRAY);
         return xyChart;

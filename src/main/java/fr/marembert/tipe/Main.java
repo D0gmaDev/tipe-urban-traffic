@@ -53,7 +53,7 @@ public class Main {
     private static void constantAccelerationExperiment() {
 
         runExperiment(
-                new ConstantAccelerationExperiment(50, 5.),
+                new ConstantAccelerationExperiment(40, 50, 5.),
                 new CarsPositionDisplay()
         );
     }

@@ -1,7 +1,7 @@
 package fr.marembert.tipe.math;
 
 import java.util.Arrays;
-import java.util.function.ToDoubleFunction;
+import java.util.function.DoubleUnaryOperator;
 import java.util.stream.IntStream;
 
 public class MathUtils {
@@ -27,8 +27,8 @@ public class MathUtils {
      * @param function the application to map points to.
      * @return the double array of the images.
      */
-    public static double[] getFunctionImage(double[] points, ToDoubleFunction<Double> function) {
-        return Arrays.stream(points).map(function::applyAsDouble).toArray();
+    public static double[] getFunctionImage(double[] points, DoubleUnaryOperator function) {
+        return Arrays.stream(points).map(function).toArray();
     }
 
     /**

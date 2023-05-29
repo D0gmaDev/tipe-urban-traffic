@@ -6,7 +6,7 @@ import java.util.function.DoubleUnaryOperator;
 
 public class DensityExperiment implements TrafficExperiment<DensityResult> {
 
-    private static final double e = Math.exp(1);
+    private static final DoubleUnaryOperator AMPLIFIER = value -> 10 * value;
 
     private double maximumSpeed;
     private double maximumDensity;
@@ -14,7 +14,7 @@ public class DensityExperiment implements TrafficExperiment<DensityResult> {
 
     private final DoubleUnaryOperator speed = density -> density <= criticalDensity ? maximumSpeed : density > maximumDensity ? 0 : maximumSpeed / Math.log(maximumDensity / criticalDensity) * Math.log(maximumDensity / density);
 
-    private final DoubleUnaryOperator flux = density -> density * speed.applyAsDouble(density) * 10; // multiplied by 10 to enhance readability on the chart
+    private final DoubleUnaryOperator flux = density -> density * speed.applyAsDouble(density);
 
     public DensityExperiment(double carLength, double maximumSpeed, double criticalDensity) {
         this.maximumSpeed = maximumSpeed;
@@ -29,11 +29,11 @@ public class DensityExperiment implements TrafficExperiment<DensityResult> {
 
         double[] speed = Arrays.stream(density).map(this.speed).toArray();
 
-        double[] flux = Arrays.stream(density).map(this.flux).toArray();
+        double[] flux = Arrays.stream(density).map(this.flux.andThen(AMPLIFIER)).toArray(); // amplify for readability
 
-        double optimalDensity = maximumDensity / e;
-        double maximumFlux = this.flux.applyAsDouble(optimalDensity) / 10.;
+        double optimalDensity = maximumDensity / Math.E;
+        double maximumFlux = this.flux.applyAsDouble(optimalDensity);
 
-        return new DensityResult(density, speed, flux, optimalDensity, maximumFlux);
+        return new DensityResult(this.maximumSpeed, density, speed, flux, optimalDensity, maximumFlux);
     }
 }

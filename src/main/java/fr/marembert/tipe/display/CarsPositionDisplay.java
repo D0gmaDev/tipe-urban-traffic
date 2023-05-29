@@ -16,7 +16,7 @@ public class CarsPositionDisplay implements ResultDisplayHandler<CarsPositionRes
     @Override
     public void displayResult(CarsPositionResult result) {
 
-        XYChart chart = new XYChartBuilder().theme(ChartTheme.Matlab).title(result.title()).xAxisTitle("Temps (s)").yAxisTitle("Position (m)").build();
+        XYChart chart = new XYChartBuilder().theme(ChartTheme.Matlab).title(result.title()).xAxisTitle("Time (s)").yAxisTitle("Position (m)").build();
 
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
         chart.getStyler().setMarkerSize(3);
@@ -27,7 +27,7 @@ public class CarsPositionDisplay implements ResultDisplayHandler<CarsPositionRes
         int i = 0;
 
         for (double[] series : speeds) {
-            XYSeries xySeries = chart.addSeries(result.labels()[i++], result.timeSample(), series);
+            XYSeries xySeries = chart.addSeries(result.labels().get(i++), result.timeSample(), series);
             xySeries.setLineStyle(SeriesLines.SOLID);
             xySeries.setLineColor(XChartSeriesColors.BLUE);
         }
