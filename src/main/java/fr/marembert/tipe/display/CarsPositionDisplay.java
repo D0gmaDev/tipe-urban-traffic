@@ -1,6 +1,6 @@
 package fr.marembert.tipe.display;
 
-import fr.marembert.tipe.experiment.CarsPositionResult;
+import fr.marembert.tipe.experiment.flux.CarsPositionResult;
 import fr.marembert.tipe.math.RealMatrix2D;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;

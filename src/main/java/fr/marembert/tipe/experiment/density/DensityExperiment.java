@@ -1,5 +1,6 @@
-package fr.marembert.tipe.experiment;
+package fr.marembert.tipe.experiment.density;
 
+import fr.marembert.tipe.experiment.TrafficExperiment;
 import fr.marembert.tipe.math.MathUtils;
 import java.util.Arrays;
 import java.util.function.DoubleUnaryOperator;

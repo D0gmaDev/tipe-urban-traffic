@@ -1,6 +1,6 @@
 package fr.marembert.tipe.display;
 
-import fr.marembert.tipe.experiment.CarFluxResult;
+import fr.marembert.tipe.experiment.flux.CarFluxResult;
 import java.util.List;
 import java.util.function.IntFunction;
 import org.knowm.xchart.SwingWrapper;

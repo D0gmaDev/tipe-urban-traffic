@@ -1,7 +1,7 @@
 package fr.marembert.tipe.display;
 
-import fr.marembert.tipe.experiment.DensityResult;
 import fr.marembert.tipe.experiment.MultipleExperiment.MultipleResult;
+import fr.marembert.tipe.experiment.density.DensityResult;
 import java.awt.Color;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;

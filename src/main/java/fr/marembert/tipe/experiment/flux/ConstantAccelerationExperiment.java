@@ -1,7 +1,8 @@
-package fr.marembert.tipe.experiment;
+package fr.marembert.tipe.experiment.flux;
 
 import static fr.marembert.tipe.traffic.DynamicTick.TIME_STEP;
 
+import fr.marembert.tipe.experiment.TrafficExperiment;
 import fr.marembert.tipe.math.MathUtils;
 import fr.marembert.tipe.math.Matrix;
 import fr.marembert.tipe.math.RealMatrix2D;
