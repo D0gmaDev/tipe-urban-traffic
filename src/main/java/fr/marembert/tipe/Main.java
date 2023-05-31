@@ -64,13 +64,16 @@ public class Main {
         );
     }
 
+    /**
+     * Test a simple Traffic perturbation
+     */
     private static void carFluxExperiment() {
         double defaultSpeed = 10.;
 
         DoubleUnaryOperator leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
 
         runExperiment(
-                new CarFluxExperiment(40, 3, 4, 40, defaultSpeed, 1, 20, leadingCarSpeed),
+                new CarFluxExperiment(40, 5, 4, 40, defaultSpeed, 1, 20, leadingCarSpeed),
                 new CarsDisplay()
         );
     }
@@ -95,14 +98,16 @@ public class Main {
         );
     }
 
+    /**
+     * Compare different target speeds
+     */
     private static void carFluxExperiment3() {
 
         MultipleExperiment<CarFluxResult> experiments = new MultipleExperiment<>();
 
-        for (int speed = 8; speed <= 13; speed++) {
-            double defaultSpeed = speed;
+        for (double defaultSpeed : List.of(8., 13.)) {
             DoubleUnaryOperator leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
-            experiments.addExperiment(new CarFluxExperiment(40, 6, 4, 50, defaultSpeed, 1, 30, leadingCarSpeed));
+            experiments.addExperiment(new CarFluxExperiment(40, 6, 4, 50, defaultSpeed, 1, 20, leadingCarSpeed));
         }
 
         runExperiment(
@@ -112,6 +117,9 @@ public class Main {
     }
 
 
+    /**
+     * The first car breaks completely
+     */
     private static void fullStopExperiment() {
         double defaultSpeed = 10.;
 
@@ -123,7 +131,11 @@ public class Main {
         );
     }
 
+    /**
+     * Density and Flux experiment
+     */
     private static void densityExperiment() {
+
         runExperiment(
                 new MultipleExperiment<>(List.of(new DensityExperiment(4., 13., 2 / 50.), new DensityExperiment(4., 8., 2 / 25.))),
                 new MultipleDensityDisplay()
