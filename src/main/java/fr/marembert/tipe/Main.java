@@ -24,6 +24,13 @@ import java.util.function.DoubleUnaryOperator;
  */
 public class Main {
 
+    private static final double REACTION_TIME       = 1; // s
+    private static final double SPEED_50            = 13; // m/s
+    private static final double SPEED_30            = 8; // m/s
+    private static final double CAR_LENGTH          = 4; // m
+    private static final double CRITICAL_DENSITY_50 = 2 / 50.; // cars/m
+    private static final double CRITICAL_DENSITY_30 = 2 * CRITICAL_DENSITY_50;
+
     public static void main(String[] args) {
         System.out.print("Please type an experiment id: ");
 
@@ -73,7 +80,7 @@ public class Main {
         DoubleUnaryOperator leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
 
         runExperiment(
-                new CarFluxExperiment(40, 5, 4, 40, defaultSpeed, 1, 20, leadingCarSpeed),
+                new CarFluxExperiment(40, 5, CAR_LENGTH, 40, defaultSpeed, REACTION_TIME, 20, leadingCarSpeed),
                 new CarsDisplay()
         );
     }
@@ -89,7 +96,7 @@ public class Main {
         MultipleExperiment<CarFluxResult> experiments = new MultipleExperiment<>();
 
         for (int i = 6; i < 12; i++) {
-            experiments.addExperiment(new CarFluxExperiment(40, 6, 4, 60, defaultSpeed, 1, i * 5, leadingCarSpeed));
+            experiments.addExperiment(new CarFluxExperiment(40, 6, CAR_LENGTH, 60, defaultSpeed, REACTION_TIME, i * 5, leadingCarSpeed));
         }
 
         runExperiment(
@@ -105,9 +112,9 @@ public class Main {
 
         MultipleExperiment<CarFluxResult> experiments = new MultipleExperiment<>();
 
-        for (double defaultSpeed : List.of(8., 13.)) {
+        for (double defaultSpeed : List.of(SPEED_30, SPEED_50)) {
             DoubleUnaryOperator leadingCarSpeed = time -> time < 0 ? defaultSpeed : defaultSpeed * (1 - 1.5 * time * Math.exp((0.6 - time) / 0.6));
-            experiments.addExperiment(new CarFluxExperiment(40, 6, 4, 50, defaultSpeed, 1, 20, leadingCarSpeed));
+            experiments.addExperiment(new CarFluxExperiment(40, 6, CAR_LENGTH, 50, defaultSpeed, REACTION_TIME, 20, leadingCarSpeed));
         }
 
         runExperiment(
@@ -126,7 +133,7 @@ public class Main {
         DoubleUnaryOperator leadingCarSpeed = time -> time <= 0 ? defaultSpeed : defaultSpeed * Math.exp((-0.5 * time));
 
         runExperiment(
-                new CarFluxExperiment(60, 3, 4, 200, defaultSpeed, 1, 10, leadingCarSpeed),
+                new CarFluxExperiment(60, 3, CAR_LENGTH, 200, defaultSpeed, REACTION_TIME, 10, leadingCarSpeed),
                 new CarsDisplay()
         );
     }
@@ -137,7 +144,7 @@ public class Main {
     private static void densityExperiment() {
 
         runExperiment(
-                new MultipleExperiment<>(List.of(new DensityExperiment(4., 13., 2 / 50.), new DensityExperiment(4., 8., 2 / 25.))),
+                new MultipleExperiment<>(List.of(new DensityExperiment(CAR_LENGTH, SPEED_50, CRITICAL_DENSITY_50), new DensityExperiment(CAR_LENGTH, SPEED_30, CRITICAL_DENSITY_30))),
                 new MultipleDensityDisplay()
         );
     }
