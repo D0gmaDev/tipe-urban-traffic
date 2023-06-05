@@ -29,7 +29,7 @@ public class Main {
     private static final double SPEED_30            = 8; // m/s
     private static final double CAR_LENGTH          = 4; // m
     private static final double CRITICAL_DENSITY_50 = 2 / 50.; // cars/m
-    private static final double CRITICAL_DENSITY_30 = 2 * CRITICAL_DENSITY_50;
+    private static final double CRITICAL_DENSITY_30 = 2 * CRITICAL_DENSITY_50; // cars/m
 
     public static void main(String[] args) {
         System.out.print("Please type an experiment id: ");

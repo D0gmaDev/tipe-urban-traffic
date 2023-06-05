@@ -27,7 +27,8 @@ public class GenericMatrix2D<T> extends Matrix2D<T> {
     @Override
     public String toString() {
         String matrix = Arrays.deepToString(this.matrix);
-        return "GenericMatrix2D(" + typeClass.getSimpleName() + "){\n" + matrix.substring(1, matrix.length() - 1)
-                .replaceAll("], ", "]\n") + "\n}";
+        String format = "GenericMatrix2D(%s){%n%s%n}";
+        return String.format(format, typeClass.getSimpleName(), matrix.substring(1, matrix.length() - 1)
+                .replaceAll("], ", "]\n"));
     }
 }

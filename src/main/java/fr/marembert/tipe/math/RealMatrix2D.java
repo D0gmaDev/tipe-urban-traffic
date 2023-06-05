@@ -68,7 +68,8 @@ public class RealMatrix2D extends Matrix2D<Double> implements Iterable<double[]>
     @Override
     public String toString() {
         String matrix = Arrays.deepToString(this.matrix);
-        return "RealMatrix2D{\n" + matrix.substring(1, matrix.length() - 1).replaceAll("], ", "]\n") + "\n}";
+        String format = "RealMatrix2D{%n%s%n}";
+        return String.format(format, matrix.substring(1, matrix.length() - 1).replaceAll("], ", "]\n"));
     }
 
     @Override
