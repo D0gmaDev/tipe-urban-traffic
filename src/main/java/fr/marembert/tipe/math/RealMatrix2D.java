@@ -1,8 +1,12 @@
 package fr.marembert.tipe.math;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 /**
  * A real matrix is a wrapper for a matrix containing primitive doubles.
@@ -55,6 +59,10 @@ public class RealMatrix2D extends Matrix2D<Double> implements Iterable<double[]>
         return values;
     }
 
+    public DoubleStream doubleStream() {
+        return Arrays.stream(this.matrix).flatMapToDouble(Arrays::stream);
+    }
+
     @Override
     public void set(int row, int column, Double data) {
         this.matrix[row][column] = data;
@@ -65,11 +73,16 @@ public class RealMatrix2D extends Matrix2D<Double> implements Iterable<double[]>
         return this.matrix[row][column];
     }
 
+    /* toString() fixed-size value formatter */
+    private static final NumberFormat NUMBER_FORMAT = new DecimalFormat("0.00");
+
     @Override
     public String toString() {
-        String matrix = Arrays.deepToString(this.matrix);
-        String format = "RealMatrix2D{%n%s%n}";
-        return String.format(format, matrix.substring(1, matrix.length() - 1).replaceAll("], ", "]\n"));
+        String matrixRepresentation = Arrays.stream(this.matrix)
+                .map(row -> Arrays.stream(row).mapToObj(NUMBER_FORMAT::format).collect(Collectors.joining(" ", "  | ", " |")))
+                .collect(Collectors.joining("\n"));
+
+        return String.format("RealMatrix2D {%n%s%n}", matrixRepresentation);
     }
 
     @Override

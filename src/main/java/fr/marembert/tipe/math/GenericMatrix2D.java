@@ -2,6 +2,8 @@ package fr.marembert.tipe.math;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GenericMatrix2D<T> extends Matrix2D<T> {
 
@@ -26,9 +28,10 @@ public class GenericMatrix2D<T> extends Matrix2D<T> {
 
     @Override
     public String toString() {
-        String matrix = Arrays.deepToString(this.matrix);
-        String format = "GenericMatrix2D(%s){%n%s%n}";
-        return String.format(format, typeClass.getSimpleName(), matrix.substring(1, matrix.length() - 1)
-                .replaceAll("], ", "]\n"));
+        String matrixRepresentation = Arrays.stream(this.matrix)
+                .map(row -> Arrays.stream(row).map(Objects::toString).collect(Collectors.joining(" ", "  | ", " |")))
+                .collect(Collectors.joining("\n"));
+
+        return String.format("GenericMatrix2D(%s) {%n%s%n}", typeClass.getSimpleName(), matrixRepresentation);
     }
 }
